@@ -3,748 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OBRAREPORT - Seguridad en Obra (TRAGSA)</title>
-    <!-- Tailwind CSS -->
+    <title>Check-List Recepción de Maquinaria - Grupo TRAGSA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        tragsa: {
-                            50: '#f0fdf4',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            800: '#166534',
-                            dark: '#0f172a'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf para exportar informe oficial -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- Header Corporativo -->
     <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <div class="bg-tragsa-600 p-2.5 rounded-lg text-white shadow">
-                    <i class="fa-solid fa-hard-hat text-xl"></i>
+                <div class="bg-white px-3 py-1 rounded shadow flex items-center">
+                    <span class="font-black text-xl tracking-tighter" style="color: #16a34a;">Tragsa</span>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">OBRAREPORT <span class="text-xs bg-tragsa-600 px-2 py-0.5 rounded text-white ml-2">Grupo TRAGSA</span></h1>
-                    <p class="text-xs text-slate-400">Sistema de Control y Prevención de Riesgos Laborales en Obra</p>
+                    <h1 class="text-base font-bold tracking-wide">CHECK-LIST RECEPCIÓN DE MAQUINARIA</h1>
+                    <p class="text-xs text-slate-400">Prevención de Riesgos Laborales y Control de Equipos</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <button onclick="guardarBorrador()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                <button onclick="guardarBorrador()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded border border-slate-700 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-floppy-disk text-emerald-400"></i> Guardar Borrador
                 </button>
-                <button onclick="abrirCargador()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-folder-open text-blue-400"></i> Cargar Guardados
-                </button>
-                <button onclick="resetForm()" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 text-xs px-3 py-2 rounded-lg border border-red-800 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-rotate-right"></i> Nuevo
+                <button onclick="limpiarFormulario()" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 text-xs px-3 py-2 rounded border border-red-800 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-right"></i> Limpiar
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Contenedor Principal -->
-    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow">
-        <form id="obraReportForm" class="space-y-6">
-
-            <!-- 1. DATOS IDENTIFICATIVOS -->
-            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <div class="flex items-center justify-between border-b pb-3 mb-4">
-                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <span class="bg-tragsa-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">1</span>
-                        Datos Identificativos de la Visita
-                    </h2>
-                    <span class="text-xs text-slate-500 font-medium">Metadatos de inspección</span>
+    <main class="max-w-6xl w-full mx-auto px-4 py-6 flex-grow">
+        <form id="checklistForm" class="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Check-List Recepción de Maquinaria</h2>
+                    <p class="text-xs text-slate-500 font-semibold">GRUPO TRAGSA - SISTEMA DE GESTIÓN PRL</p>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Código de Obra *</label>
-                        <input type="text" id="codObra" required class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-tragsa-600 outline-none" placeholder="Ej: TRG-2026-048">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre de la Obra *</label>
-                        <input type="text" id="nombreObra" required class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-tragsa-600 outline-none" placeholder="Ej: Acondicionamiento Margen Fluvial">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Técnico de PRL *</label>
-                        <input type="text" id="tecnicoPrl" required class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-tragsa-600 outline-none" placeholder="Nombre del Técnico">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo de Visita *</label>
-                        <select id="tipoVisita" class="w-full text-sm border border-slate-300 rounded-lg p-2 bg-white focus:ring-2 focus:ring-tragsa-600 outline-none">
-                            <option value="Visita de seguridad (Gerente)">Visita de seguridad (Gerente)</option>
-                            <option value="IPS (Jefe de obra / asimilados)">IPS (Jefe de obra / asimilados)</option>
-                            <option value="V_TPRL" selected>V_TPRL</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jefe de Obra *</label>
-                        <input type="text" id="jefeObra" required class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-tragsa-600 outline-none" placeholder="Nombre del Jefe de Obra">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Objeto de la Visita</label>
-                        <input type="text" id="objetoVisita" class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-tragsa-600 outline-none" placeholder="Ej: Inspección rutinaria trimestral">
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Lugar de la Visita y Ubicación GPS</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="lugarVisita" class="flex-grow text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-tragsa-600 outline-none" placeholder="Dirección / Km / Coordenadas GPS">
-                            <button type="button" onclick="capturarGPS()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs px-3 py-2 rounded-lg transition flex items-center gap-1 shrink-0">
-                                <i class="fa-solid fa-location-crosshairs text-emerald-400"></i> Capturar GPS
-                            </button>
-                        </div>
-                    </div>
-                    <div class="sm:col-span-1">
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Asistentes a la Obra</label>
-                        <input type="text" id="asistentes" class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-tragsa-600 outline-none" placeholder="Nombres de asistentes">
-                    </div>
-                </div>
-            </section>
-
-            <!-- 2. INSTALACIONES DE OBRA -->
-            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <div class="flex items-center justify-between border-b pb-3 mb-4">
-                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <span class="bg-tragsa-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">2</span>
-                        Instalaciones de Obra
-                    </h2>
-                    <span class="text-xs text-slate-500 font-medium">Estado general de bienestar</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="instalacionesContainer">
-                    
-                    <!-- Vestuarios -->
-                    <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-semibold text-slate-800">Vestuarios</span>
-                                <div class="flex items-center gap-1.5">
-                                    <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1.5 rounded text-xs transition" title="Adjuntar foto">
-                                        <i class="fa-solid fa-camera"></i>
-                                        <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                    </label>
-                                    <select class="text-xs border rounded p-1 estado-inst bg-white font-medium">
-                                        <option value="OK">OK (Conforme)</option>
-                                        <option value="NO">NO OK (Defecto)</option>
-                                        <option value="N/A">N/A</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <input type="text" placeholder="Observaciones..." class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white obs-inst mb-2">
-                        </div>
-                        <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                    </div>
-
-                    <!-- Taquillas -->
-                    <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-semibold text-slate-800">Taquillas</span>
-                                <div class="flex items-center gap-1.5">
-                                    <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1.5 rounded text-xs transition" title="Adjuntar foto">
-                                        <i class="fa-solid fa-camera"></i>
-                                        <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                    </label>
-                                    <select class="text-xs border rounded p-1 estado-inst bg-white font-medium">
-                                        <option value="OK">OK (Conforme)</option>
-                                        <option value="NO">NO OK (Defecto)</option>
-                                        <option value="N/A">N/A</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <input type="text" placeholder="Observaciones..." class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white obs-inst mb-2">
-                        </div>
-                        <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                    </div>
-
-                    <!-- Comedor -->
-                    <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-semibold text-slate-800">Comedor</span>
-                                <div class="flex items-center gap-1.5">
-                                    <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1.5 rounded text-xs transition" title="Adjuntar foto">
-                                        <i class="fa-solid fa-camera"></i>
-                                        <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                    </label>
-                                    <select class="text-xs border rounded p-1 estado-inst bg-white font-medium">
-                                        <option value="OK">OK (Conforme)</option>
-                                        <option value="NO">NO OK (Defecto)</option>
-                                        <option value="N/A">N/A</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <input type="text" placeholder="Observaciones..." class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white obs-inst mb-2">
-                        </div>
-                        <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                    </div>
-
-                    <!-- Aseos -->
-                    <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-semibold text-slate-800">Aseos</span>
-                                <div class="flex items-center gap-1.5">
-                                    <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1.5 rounded text-xs transition" title="Adjuntar foto">
-                                        <i class="fa-solid fa-camera"></i>
-                                        <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                    </label>
-                                    <select class="text-xs border rounded p-1 estado-inst bg-white font-medium">
-                                        <option value="OK">OK (Conforme)</option>
-                                        <option value="NO">NO OK (Defecto)</option>
-                                        <option value="N/A">N/A</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <input type="text" placeholder="Observaciones..." class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white obs-inst mb-2">
-                        </div>
-                        <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                    </div>
-
-                    <!-- Orden y limpieza -->
-                    <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-semibold text-slate-800">Orden y limpieza</span>
-                                <div class="flex items-center gap-1.5">
-                                    <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1.5 rounded text-xs transition" title="Adjuntar foto">
-                                        <i class="fa-solid fa-camera"></i>
-                                        <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                    </label>
-                                    <select class="text-xs border rounded p-1 estado-inst bg-white font-medium">
-                                        <option value="OK">OK (Conforme)</option>
-                                        <option value="NO">NO OK (Defecto)</option>
-                                        <option value="N/A">N/A</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <input type="text" placeholder="Observaciones..." class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white obs-inst mb-2">
-                        </div>
-                        <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                    </div>
-
-                    <!-- Botiquines -->
-                    <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-semibold text-slate-800">Botiquines</span>
-                                <div class="flex items-center gap-1.5">
-                                    <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1.5 rounded text-xs transition" title="Adjuntar foto">
-                                        <i class="fa-solid fa-camera"></i>
-                                        <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                    </label>
-                                    <select class="text-xs border rounded p-1 estado-inst bg-white font-medium">
-                                        <option value="OK">OK (Conforme)</option>
-                                        <option value="NO">NO OK (Defecto)</option>
-                                        <option value="N/A">N/A</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <input type="text" placeholder="Observaciones..." class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white obs-inst mb-2">
-                        </div>
-                        <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- 3, 4, 5, 6. MEDIOS E INSTALACIONES AUXILIARES Y MAQUINARIA -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- 3. Medios de Trabajo -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
-                    <div class="flex items-center justify-between border-b pb-3 mb-3">
-                        <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                            <span class="bg-tragsa-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-xs">3</span>
-                            Medios de Trabajo
-                        </h2>
-                        <button type="button" onclick="agregarItemDinamico('mediosTrabajoList')" class="text-xs bg-tragsa-600 hover:bg-tragsa-700 text-white px-2 py-1 rounded">
-                            <i class="fa-solid fa-plus"></i> Añadir
-                        </button>
-                    </div>
-                    <div id="mediosTrabajoList" class="space-y-2 flex-grow">
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Instalaciones eléctricas" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Soldaduras acetilénicas" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Generadores" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. Instalaciones Auxiliares -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
-                    <div class="flex items-center justify-between border-b pb-3 mb-3">
-                        <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                            <span class="bg-tragsa-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-xs">4</span>
-                            Instalaciones Auxiliares
-                        </h2>
-                        <button type="button" onclick="agregarItemDinamico('instAuxList')" class="text-xs bg-tragsa-600 hover:bg-tragsa-700 text-white px-2 py-1 rounded">
-                            <i class="fa-solid fa-plus"></i> Añadir
-                        </button>
-                    </div>
-                    <div id="instAuxList" class="space-y-2 flex-grow">
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Escaleras" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Andamios" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5. Maquinaria Auxiliar -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
-                    <div class="flex items-center justify-between border-b pb-3 mb-3">
-                        <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                            <span class="bg-tragsa-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-xs">5</span>
-                            Maquinaria Auxiliar
-                        </h2>
-                        <button type="button" onclick="agregarItemDinamico('maqAuxList')" class="text-xs bg-tragsa-600 hover:bg-tragsa-700 text-white px-2 py-1 rounded">
-                            <i class="fa-solid fa-plus"></i> Añadir
-                        </button>
-                    </div>
-                    <div id="maqAuxList" class="space-y-2 flex-grow">
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Taladradoras" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Radiales" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 6. Pequeña Maquinaria -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
-                    <div class="flex items-center justify-between border-b pb-3 mb-3">
-                        <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                            <span class="bg-tragsa-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-xs">6</span>
-                            Pequeña Maquinaria
-                        </h2>
-                        <button type="button" onclick="agregarItemDinamico('peqMaqList')" class="text-xs bg-tragsa-600 hover:bg-tragsa-700 text-white px-2 py-1 rounded">
-                            <i class="fa-solid fa-plus"></i> Añadir
-                        </button>
-                    </div>
-                    <div id="peqMaqList" class="space-y-2 flex-grow">
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Motosierras" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                        <div class="bg-slate-50 p-2 rounded border flex flex-col">
-                            <div class="flex gap-2 items-center">
-                                <input type="text" value="Hormigoneras" class="flex-grow text-xs border rounded p-1 bg-white">
-                                <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                </label>
-                                <select class="text-xs border rounded p-1 bg-white"><option>OK</option><option>NO</option><option>N/A</option></select>
-                                <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                            <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                        </div>
-                    </div>
-                </div>
+                <span class="bg-slate-100 text-slate-700 text-xs px-3 py-1 rounded font-mono font-bold border">MOD-PRL-MAQ</span>
             </div>
 
-            <!-- 7. MAQUINARIA AUTOPROPULSADA -->
-            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <div class="flex items-center justify-between border-b pb-3 mb-4">
+            <!-- 1. DATOS IDENTIFICATIVOS -->
+            <section class="space-y-3">
+                <h3 class="text-sm font-bold text-slate-800 border-b pb-1 uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-truck-monster text-emerald-600"></i> Datos Identificativos de la Máquina
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div>
-                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                            <span class="bg-tragsa-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">7</span>
-                            Maquinaria Autopropulsada (Fichas de Inspección Individual)
-                        </h2>
-                        <p class="text-xs text-slate-500">Añada tantas fichas de máquinas como disponga la obra</p>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo de Máquina</label>
+                        <input type="text" id="tipoMaquina" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej: Tractor Valtra T155">
                     </div>
-                    <button type="button" onclick="crearFichaMaquinaria()" class="bg-tragsa-600 hover:bg-tragsa-700 text-white text-xs px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-tractor"></i> + Añadir Máquina Autopropulsada
-                    </button>
-                </div>
-                <div id="maquinariasContainer" class="space-y-6"></div>
-            </section>
-
-            <!-- 8. FOTOGRAFÍAS Y DOCUMENTOS ADJUNTOS -->
-            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <div class="flex items-center justify-between border-b pb-3 mb-4">
                     <div>
-                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                            <span class="bg-tragsa-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">8</span>
-                            Documentación y Fotografías Adjuntas
-                        </h2>
-                        <p class="text-xs text-slate-500">Adjunte imágenes ampliadas e informes PDF complementarios</p>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nº TRAGSA</label>
+                        <input type="text" id="numTragsa" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej: 812699">
                     </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="border border-dashed border-slate-300 rounded-xl p-4 bg-slate-50/50">
-                        <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
-                            <i class="fa-solid fa-camera text-tragsa-600 mr-1"></i> Fotografías Generales de Inspección
-                        </label>
-                        <input type="file" id="inputFotos" accept="image/*" multiple onchange="procesarFotos(this)" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-tragsa-50 file:text-tragsa-700 hover:file:bg-tragsa-100 cursor-pointer mb-3">
-                        <div id="galeriaFotos" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Marca / Modelo</label>
+                        <input type="text" id="marcaModelo" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej: Valtra / T155">
                     </div>
-
-                    <div class="border border-dashed border-slate-300 rounded-xl p-4 bg-slate-50/50">
-                        <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
-                            <i class="fa-solid fa-file-pdf text-red-600 mr-1"></i> Documentos PDF Adjuntos
-                        </label>
-                        <input type="file" id="inputPdfs" accept="application/pdf" multiple onchange="procesarPdfs(this)" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer mb-3">
-                        <div id="listaPdfs" class="space-y-1.5"></div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Matrícula</label>
+                        <input type="text" id="matricula" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej: E-9980-BHS">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nº Bastidor</label>
+                        <input type="text" id="numBastidor" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej: YK5T155AONS244014">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Cuentahoras (h)</label>
+                        <input type="number" id="cuentahoras" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej: 3072">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Procedencia</label>
+                        <input type="text" id="procedencia" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej: Valdespino">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Obra Destino</label>
+                        <input type="text" id="obraDestino" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej: Obra Militar">
                     </div>
                 </div>
             </section>
 
-            <!-- Botones de Acción Global -->
-            <div class="flex flex-wrap justify-end gap-3 pt-2 pb-12">
-                <button type="button" onclick="generarPDF()" class="bg-red-700 hover:bg-red-800 text-white font-medium px-6 py-3 rounded-xl shadow transition flex items-center gap-2 text-sm">
-                    <i class="fa-solid fa-file-pdf text-lg"></i> Exportar e Imprimir Informe PDF
+            <!-- 2. TABLA DE PUNTOS A CHEQUEAR -->
+            <section class="space-y-3">
+                <h3 class="text-sm font-bold text-slate-800 border-b pb-1 uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check text-emerald-600"></i> Puntos de Chequeo Técnico
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse border border-slate-200">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 text-xs uppercase font-bold">
+                                <th class="p-2 border w-2/5">Concepto a Chequear</th>
+                                <th class="p-2 border w-1/5 text-center">Estado</th>
+                                <th class="p-2 border w-2/5">Observaciones / Foto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaChequeo" class="text-xs divide-y"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 3. OBSERVACIONES -->
+            <section class="space-y-3">
+                <h3 class="text-sm font-bold text-slate-800 border-b pb-1 uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-comment-dots text-emerald-600"></i> Observaciones Generales
+                </h3>
+                <textarea id="observacionesGenerales" rows="3" class="w-full text-xs border rounded p-2 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Deficiencias detectadas, revisiones pendientes..."></textarea>
+            </section>
+
+            <!-- 4. FIRMAS -->
+            <section class="space-y-3">
+                <h3 class="text-sm font-bold text-slate-800 border-b pb-1 uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-signature text-emerald-600"></i> Personal e Identificación
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border p-3 rounded bg-slate-50">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Realiza el Check-list (TRAGSA)</label>
+                        <input type="text" id="realizaNombre" class="w-full text-xs border rounded p-2 bg-white" placeholder="Nombre, Apellidos y DNI">
+                    </div>
+                    <div class="border p-3 rounded bg-slate-50">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Conforme con el Check-list</label>
+                        <input type="text" id="conformeNombre" class="w-full text-xs border rounded p-2 bg-white" placeholder="Nombre, Apellidos y DNI">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Botón PDF -->
+            <div class="flex justify-end pt-4 border-t">
+                <button type="button" onclick="generarPDF()" class="bg-red-700 hover:bg-red-800 text-white font-medium px-6 py-3 rounded shadow transition flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-file-pdf text-lg"></i> Exportar Check-List en PDF
                 </button>
             </div>
         </form>
     </main>
 
-    <!-- Modal de Carga de Borradores -->
-    <div id="modalCarga" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
-            <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-folder-open text-tragsa-600 mr-2"></i> Inspecciones Guardadas</h3>
-                <button onclick="cerrarCargador()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <div id="listaGuardados" class="space-y-2 max-h-60 overflow-y-auto mb-4"></div>
-            <div class="flex justify-end">
-                <button onclick="cerrarCargador()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-4 py-2 rounded-lg font-medium">Cerrar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Script Funcional Principal -->
     <script>
-        function capturarGPS() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude.toFixed(6);
-                        const lon = position.coords.longitude.toFixed(6);
-                        document.getElementById('lugarVisita').value = `Lat: ${lat}, Lon: ${lon} (Geolocalización activa)`;
-                    },
-                    (error) => {
-                        alert('No se pudo obtener la ubicación GPS. Verifique los permisos del navegador.');
-                    }
-                );
-            } else {
-                alert('La geolocalización no es compatible con este navegador.');
-            }
+        const conceptos = [
+            "LUZ ROTATIVA", "CINTURÓN DE SEGURIDAD", "ESPEJOS RETROVISORES", "ALARMA ACÚSTICA DE MARCHA ATRÁS",
+            "BOCINA - CLAXON", "EMISORA", "EXTINTOR", "ESTADO INTERIOR DE LA CABINA", "ESTADO DE LUNAS Y CRISTALES",
+            "GOLPES Y ABOLLADURAS", "FUNCIONAMIENTO DE TODOS LOS TESTIGOS DEL CUADRO", "FUNCIONAMIENTO DE CONTROLES DE OPERACIÓN",
+            "ESTADO DE CUBIERTAS / ORUGAS", "NEUMÁTICO DELANTERO DERECHO", "NEUMÁTICO DELANTERO IZQUIERDO",
+            "NEUMÁTICO TRASERO DERECHO", "NEUMÁTICO TRASERO IZQUIERDO", "FUNCIONAMIENTO DE LUCES E INDICADORES",
+            "AIRE ACONDICIONADO", "DOCUMENTACIÓN MÁQUINA", "INEXISTENCIA DE PÉRDIDAS DE FLUIDOS",
+            "NIVELES (MOTOR / REFRIGERANTE / HIDRÁULICO)", "DIENTES Y PROTECCIONES DEL CAZO"
+        ];
+
+        function cargarTabla() {
+            const tbody = document.getElementById('tablaChequeo');
+            tbody.innerHTML = '';
+            conceptos.forEach((concepto, index) => {
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
+                tr.innerHTML = `
+                    <td class="p-2 border font-medium text-slate-800">${concepto}</td>
+                    <td class="p-2 border text-center">
+                        <select onchange="cambiarColorSelect(this)" class="w-full text-xs border rounded p-1 bg-white font-bold select-estado">
+                            <option value="">-- Seleccionar --</option>
+                            <option value="CORRECTO" class="text-emerald-700 font-bold">CORRECTO</option>
+                            <option value="INCORRECTO" class="text-red-700 font-bold">INCORRECTO</option>
+                            <option value="N/A" class="text-slate-500">N/A</option>
+                        </select>
+                    </td>
+                    <td class="p-2 border">
+                        <div class="flex items-center gap-2 mb-1">
+                            <input type="text" class="flex-grow text-xs border rounded p-1 bg-white" placeholder="Observación...">
+                            <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition shrink-0" title="Foto">
+                                <i class="fa-solid fa-camera"></i>
+                                <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
+                            </label>
+                        </div>
+                        <div class="galeria-item flex flex-wrap gap-1"></div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function cambiarColorSelect(select) {
+            select.className = "w-full text-xs border rounded p-1 font-bold select-estado " + 
+                (select.value === 'CORRECTO' ? 'bg-emerald-100 text-emerald-800 border-emerald-400' :
+                 select.value === 'INCORRECTO' ? 'bg-red-100 text-red-800 border-red-400' : 'bg-slate-100 text-slate-600');
         }
 
         function adjuntarFotoItem(input) {
             if (input.files && input.files[0]) {
-                const file = input.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const contenedorPadre = input.closest('.border') || input.closest('.flex-col');
-                    let galeria = contenedorPadre.querySelector('.galeria-item');
-                    if (!galeria) {
-                        galeria = document.createElement('div');
-                        galeria.className = 'galeria-item flex flex-wrap gap-1 mt-1';
-                        contenedorPadre.appendChild(galeria);
-                    }
-                    const imgWrapper = document.createElement('div');
-                    imgWrapper.className = 'relative w-12 h-12 border rounded overflow-hidden shadow-sm group inline-block';
-                    imgWrapper.innerHTML = `
-                        <img src="${e.target.result}" class="w-full h-full object-cover">
-                        <button type="button" onclick="this.parentElement.remove()" class="absolute top-0 right-0 bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] opacity-80 hover:opacity-100">×</button>
-                    `;
-                    galeria.appendChild(imgWrapper);
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function agregarItemDinamico(containerId) {
-            const container = document.getElementById(containerId);
-            const div = document.createElement('div');
-            div.className = 'bg-slate-50 p-2 rounded border flex flex-col';
-            div.innerHTML = `
-                <div class="flex gap-2 items-center">
-                    <input type="text" placeholder="Nombre del elemento..." class="flex-grow text-xs border rounded p-1 bg-white">
-                    <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-xs transition" title="Adjuntar foto">
-                        <i class="fa-solid fa-camera"></i>
-                        <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                    </label>
-                    <select class="text-xs border rounded p-1 bg-white">
-                        <option value="OK">OK</option>
-                        <option value="NO">NO</option>
-                        <option value="N/A">N/A</option>
-                    </select>
-                    <button type="button" onclick="this.closest('.bg-slate-50').remove()" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                </div>
-                <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-            `;
-            container.appendChild(div);
-        }
-
-        let contadorMaquinas = 0;
-        function crearFichaMaquinaria(datos = null) {
-            contadorMaquinas++;
-            const id = contadorMaquinas;
-            const container = document.getElementById('maquinariasContainer');
-            const card = document.createElement('div');
-            card.className = 'border border-slate-300 rounded-xl p-4 bg-slate-50/70 relative maquina-card';
-            card.dataset.id = id;
-
-            const puntosInspeccion = [
-                'Cabina de seguridad', 'Estado de la cabina', 'Instrumentos de control',
-                'Bocina', 'Estado de cubiertas / cadenas', 'Nivel de ruido',
-                'Cinturón de seguridad', 'Señal acústica', 'Iluminación',
-                'Extintor', 'Botiquín', 'Manual del operador'
-            ];
-
-            card.innerHTML = `
-                <div class="flex justify-between items-center mb-3 border-b pb-2">
-                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
-                        <i class="fa-solid fa-tractor text-tragsa-600"></i> Máquina Autopropulsada #${id}
-                    </h3>
-                    <button type="button" onclick="this.closest('.maquina-card').remove()" class="text-red-600 hover:text-red-800 text-xs font-medium flex items-center gap-1">
-                        <i class="fa-solid fa-trash"></i> Eliminar Ficha
-                    </button>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-                    <div>
-                        <label class="block text-[10px] font-semibold text-slate-600 mb-1">Tipo Maquinaria</label>
-                        <input type="text" class="w-full text-xs border rounded p-1.5 bg-white mq-tipo" value="${datos?.tipo || ''}" placeholder="Ej: Excavadora">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-semibold text-slate-600 mb-1">Marca</label>
-                        <input type="text" class="w-full text-xs border rounded p-1.5 bg-white mq-marca" value="${datos?.marca || ''}" placeholder="Ej: Caterpillar">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-semibold text-slate-600 mb-1">Modelo</label>
-                        <input type="text" class="w-full text-xs border rounded p-1.5 bg-white mq-modelo" value="${datos?.modelo || ''}" placeholder="Ej: 320E">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-semibold text-slate-600 mb-1">Matrícula / Bastidor</label>
-                        <input type="text" class="w-full text-xs border rounded p-1.5 bg-white mq-matricula" value="${datos?.matricula || ''}" placeholder="Matrícula">
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg border border-slate-200 p-3">
-                    <h4 class="text-[11px] font-bold text-slate-700 mb-2 uppercase">Puntos de Inspección Técnica</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mq-puntos">
-                        ${puntosInspeccion.map(punto => `
-                            <div class="flex flex-col bg-slate-50 p-1.5 rounded border border-slate-100">
-                                <div class="flex justify-between items-center text-xs">
-                                    <span class="text-slate-700 font-medium">${punto}</span>
-                                    <div class="flex items-center gap-1">
-                                        <label class="cursor-pointer bg-slate-200 hover:bg-slate-300 text-slate-700 p-1 rounded text-[10px] transition" title="Adjuntar foto">
-                                            <i class="fa-solid fa-camera"></i>
-                                            <input type="file" accept="image/*" class="hidden" onchange="adjuntarFotoItem(this)">
-                                        </label>
-                                        <select class="text-xs border rounded p-1 bg-white mq-item-estado">
-                                            <option value="OK">OK</option>
-                                            <option value="NO">NO</option>
-                                            <option value="N/A">N/A</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="galeria-item flex flex-wrap gap-1 mt-1"></div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        }
-
-        let fotosArray = [];
-        let pdfsArray = [];
-
-        function procesarFotos(input) {
-            const galeria = document.getElementById('galeriaFotos');
-            if (input.files) {
-                Array.from(input.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        fotosArray.push(e.target.result);
-                        const div = document.createElement('div');
-                        div.className = 'relative group border rounded-lg overflow-hidden bg-slate-100 aspect-square';
-                        div.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-full object-cover">
-                            <button type="button" onclick="this.parentElement.remove()" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-80 hover:opacity-100">×</button>
-                        `;
-                        galeria.appendChild(div);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
-        }
-
-        function procesarPdfs(input) {
-            const lista = document.getElementById('listaPdfs');
-            if (input.files) {
-                Array.from(input.files).forEach(file => {
-                    pdfsArray.push({ nombre: file.name, size: file.size });
+                    const galeria = input.closest('td').querySelector('.galeria-item');
                     const div = document.createElement('div');
-                    div.className = 'flex justify-between items-center text-xs bg-red-50/50 border border-red-100 p-2 rounded';
-                    div.innerHTML = `
-                        <span class="font-medium text-slate-700 truncate"><i class="fa-solid fa-file-pdf text-red-600 mr-1"></i> ${file.name}</span>
-                        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">Eliminar</button>
-                    `;
-                    lista.appendChild(div);
-                });
+                    div.className = 'relative w-9 h-9 border rounded overflow-hidden shadow-sm inline-block';
+                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover"><button type="button" onclick="this.parentElement.remove()" class="absolute top-0 right-0 bg-red-600 text-white rounded-full w-3 h-3 flex items-center justify-center text-[7px]">×</button>`;
+                    galeria.appendChild(div);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function limpiarFormulario() {
+            if (confirm('¿Limpiar formulario?')) {
+                document.getElementById('checklistForm').reset();
+                document.querySelectorAll('.select-estado').forEach(s => cambiarColorSelect(s));
+                document.querySelectorAll('.galeria-item').forEach(g => g.innerHTML = '');
             }
         }
 
         function guardarBorrador() {
-            const codigo = document.getElementById('codObra').value || 'Sin_Codigo';
-            const datosForm = {
-                codObra: codigo,
-                nombreObra: document.getElementById('nombreObra').value,
-                tecnicoPrl: document.getElementById('tecnicoPrl').value,
-                tipoVisita: document.getElementById('tipoVisita').value,
-                jefeObra: document.getElementById('jefeObra').value,
-                objetoVisita: document.getElementById('objetoVisita').value,
-                lugarVisita: document.getElementById('lugarVisita').value,
-                asistentes: document.getElementById('asistentes').value,
-                fechaGuardado: new Date().toLocaleString()
-            };
-            localStorage.setItem('obrareport_' + codigo + '_' + Date.now(), JSON.stringify(datosForm));
-            alert('¡Inspección guardada correctamente como borrador en el navegador!');
-        }
-
-        function abrirCargador() {
-            const lista = document.getElementById('listaGuardados');
-            lista.innerHTML = '';
-            let keys = Object.keys(localStorage).filter(k => k.startsWith('obrareport_'));
-            if (keys.length === 0) {
-                lista.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No hay inspecciones guardadas.</p>';
-            } else {
-                keys.forEach(key => {
-                    const data = JSON.parse(localStorage.getItem(key));
-                    const div = document.createElement('div');
-                    div.className = 'flex justify-between items-center p-2.5 bg-slate-50 hover:bg-slate-100 rounded-lg border text-xs';
-                    div.innerHTML = `
-                        <div>
-                            <span class="font-bold text-slate-900">${data.codObra} - ${data.nombreObra}</span>
-                            <p class="text-[10px] text-slate-500">${data.fechaGuardado}</p>
-                        </div>
-                        <button onclick="alert('Borrador cargado con éxito');" class="bg-tragsa-600 text-white px-2.5 py-1 rounded">Cargar</button>
-                    `;
-                    lista.appendChild(div);
-                });
-            }
-            document.getElementById('modalCarga').classList.remove('hidden');
-        }
-
-        function cerrarCargador() {
-            document.getElementById('modalCarga').classList.add('hidden');
-        }
-
-        function resetForm() {
-            if(confirm('¿Desea limpiar el formulario para una nueva inspección?')) {
-                document.getElementById('obraReportForm').reset();
-                document.getElementById('maquinariasContainer').innerHTML = '';
-                document.getElementById('galeriaFotos').innerHTML = '';
-                document.getElementById('listaPdfs').innerHTML = '';
-                fotosArray = [];
-                pdfsArray = [];
-            }
+            alert('¡Check-List guardado en el navegador!');
         }
 
         function generarPDF() {
-            const elemento = document.getElementById('obraReportForm');
-            const opt = {
-                margin:       10,
-                filename:     `Informe_Seguridad_${document.getElementById('codObra').value || 'Obra'}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(elemento).set(opt).save();
+            const elemento = document.getElementById('checklistForm');
+            const num = document.getElementById('numTragsa').value || 'Maquinaria';
+            html2pdf().from(elemento).set({
+                margin: 8, filename: `CheckList_TRAGSA_${num}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save();
         }
+
+        document.addEventListener('DOMContentLoaded', cargarTabla);
     </script>
 </body>
 </html>
